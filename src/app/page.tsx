@@ -71,8 +71,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Filtros: scroll-mt deja espacio arriba al saltar con /#categorias */}
-      <section id="categorias" className="flex scroll-mt-6 flex-col gap-3 pb-10 md:flex-row md:items-center md:pb-14">
+      {/* Filtros */}
+      <section className="flex flex-col gap-3 pb-10 md:flex-row md:items-center md:pb-14">
         <span className="font-mono text-[13px] text-secundario md:mr-2">filtrar_por:</span>
         <CategoryFilter categorias={categorias} />
       </section>
@@ -108,7 +108,7 @@ export default async function Home() {
       )}
 
       {/* Últimos artículos */}
-      <section id="articulos" className="flex scroll-mt-6 flex-col gap-6 pb-14 md:gap-8 md:pb-22">
+      <section id="articulos" className="flex flex-col gap-6 pb-14 md:gap-8 md:pb-22">
         <div className="flex items-baseline justify-between gap-4">
           <h2 className="font-display text-[26px] font-semibold md:text-[32px]">Últimos artículos</h2>
           <span className="hidden font-mono text-[13px] text-secundario lg:block">

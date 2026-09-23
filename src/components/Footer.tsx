@@ -11,7 +11,7 @@ export default function Footer() {
         </span>
         <div className="flex gap-7">
           <GitHubButton className="hover:text-texto">GitHub</GitHubButton>
-          <Link href="/#categorias" className="hover:text-texto">
+          <Link href="/categorias" className="hover:text-texto">
             Categorías
           </Link>
         </div>

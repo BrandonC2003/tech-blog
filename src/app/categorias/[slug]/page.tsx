@@ -39,7 +39,7 @@ export default async function CategoriaPage(props: PageProps<"/categorias/[slug]
           <nav aria-label="Ruta de navegación" className="flex gap-2.5 font-mono text-xs text-secundario md:text-sm">
             <Link href="/" className="hover:text-texto">inicio</Link>
             <span>/</span>
-            <span>categorias</span>
+            <Link href="/categorias" className="hover:text-texto">categorias</Link>
             <span>/</span>
             <span className={esMagenta ? "text-magenta-claro" : "text-cian"}>{categoria.slug}</span>
           </nav>

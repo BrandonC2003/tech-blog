@@ -88,7 +88,7 @@ export default async function PostPage(props: PageProps<"/posts/[id]">) {
         <div className="grid gap-10 lg:grid-cols-[700px_260px] lg:gap-20">
           <Markdown contenido={post.contenido} />
 
-          <aside className="flex flex-col gap-7 lg:sticky lg:top-8 lg:self-start">
+          <aside className="flex flex-col gap-7 lg:sticky lg:top-28 lg:self-start">
             {/* El índice solo en escritorio: en móvil ocuparía demasiado antes del contenido */}
             {titulos.length > 0 && (
               <div className="hidden lg:block">

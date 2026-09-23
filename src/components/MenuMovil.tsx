@@ -63,7 +63,9 @@ export default function MenuMovil({ categorias }: Props) {
           <Link href="/" onClick={cerrar} className="flex h-11 items-center text-texto">
             Inicio
           </Link>
-          <span className="mt-3 font-mono text-xs text-secundario">categorias/</span>
+          <Link href="/categorias" onClick={cerrar} className="mt-3 flex h-11 items-center font-mono text-xs text-secundario">
+            categorias/
+          </Link>
           {categorias.map((c) => (
             <Link
               key={c.slug}

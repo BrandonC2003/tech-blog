@@ -1,4 +1,5 @@
 import Link from "next/link";
+import IndicadorCarga from "./IndicadorCarga";
 import Portada from "./Portada";
 import type { PostResumen } from "@/lib/queries";
 import { estiloCategoria, formatearFecha } from "@/lib/formato";
@@ -23,7 +24,7 @@ export default function PostCard({ post }: { post: PostResumen }) {
         <p className="flex-1 text-[15px] leading-relaxed text-secundario">{post.resumen}</p>
         <p className="font-mono text-xs text-secundario md:text-[13px]">
           {fecha && <>{fecha} · </>}
-          {post.tiempo_lectura} min
+          {post.tiempo_lectura} min <IndicadorCarga />
         </p>
       </div>
     </Link>

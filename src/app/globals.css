@@ -42,9 +42,42 @@
 /* Le dice al navegador que la página es oscura: barras de scroll y controles nativos oscuros */
 html {
   color-scheme: dark;
+  /* El header es sticky: al saltar a un #id, deja ese espacio arriba para que no lo tape */
+  scroll-padding-top: 88px;
 }
 
 body {
   background: var(--color-fondo);
   color: var(--color-texto);
+}
+
+/* Punto que late en el enlace clicado mientras la navegación está pendiente */
+.indicador-carga {
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0;
+  visibility: hidden; /* reserva el espacio sin mostrarse */
+}
+
+.indicador-carga.is-pending {
+  visibility: visible;
+  /* 1: aparece después de 100 ms (solo si de verdad tarda). 2: late mientras espera */
+  animation:
+    aparecer 200ms ease 100ms forwards,
+    latir 1s ease-in-out 100ms infinite;
+}
+
+@keyframes aparecer {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes latir {
+  50% {
+    transform: scale(0.6);
+  }
 }
