@@ -3,10 +3,18 @@ import { notFound } from "next/navigation";
 import GitHubButton from "@/components/GitHubButton";
 import Markdown from "@/components/Markdown";
 import Portada from "@/components/Portada";
-import { obtenerPostPorId, obtenerPostsDeCategoria } from "@/lib/queries";
+import { obtenerPostPorId, obtenerPostsDeCategoria, obtenerPostsRecientes } from "@/lib/queries";
 import { estiloCategoria, formatearFecha } from "@/lib/formato";
 
+// ISR: la página se sirve desde caché y se regenera como máximo cada 60 s
 export const revalidate = 60;
+
+// Sin esta función la ruta es SSR (se renderiza en cada visita) y `revalidate` no tiene efecto.
+// Aquí se generan en el build los posts publicados; uno nuevo se genera en su primera visita.
+export async function generateStaticParams() {
+  const posts = await obtenerPostsRecientes();
+  return posts.map((post) => ({ id: String(post.id) })); // los params siempre son texto
+}
 
 export default async function PostPage(props: PageProps<"/posts/[id]">) {
   // `params` es una Promesa y su valor siempre llega como texto

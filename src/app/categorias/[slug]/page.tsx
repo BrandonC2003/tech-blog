@@ -9,7 +9,14 @@ import {
 } from "@/lib/queries";
 import { formatearFecha } from "@/lib/formato";
 
+// ISR: la página se sirve desde caché y se regenera como máximo cada 60 s
 export const revalidate = 60;
+
+// Se generan en el build todas las categorías (incluso las vacías, que muestran su estado vacío)
+export async function generateStaticParams() {
+  const categorias = await obtenerCategorias();
+  return categorias.map((c) => ({ slug: c.slug }));
+}
 
 export default async function CategoriaPage(props: PageProps<"/categorias/[slug]">) {
   const { slug } = await props.params;
