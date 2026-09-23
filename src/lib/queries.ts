@@ -6,14 +6,14 @@ import { Categoria } from "./categoria";
 // Solo las columnas que necesita una tarjeta (sin `contenido`, que es el Markdown completo)
 export type PostResumen = Pick<
   Post,
-  "id" | "titulo" | "resumen" | "autor" | "tiempo_lectura" | "fecha_publicacion" | "categoria_id"
+  "id" | "titulo" | "resumen" | "autor" | "tiempo_lectura" | "fecha_publicacion" | "categoria_id" | "destacado"
 >;
 
 export const obtenerPostsRecientes = cache(
   async (): Promise<PostResumen[]> => {
     const { data, error } = await supabase
       .from("posts")
-      .select("id, titulo, resumen, autor, tiempo_lectura, fecha_publicacion, categoria_id")
+      .select("id, titulo, resumen, autor, tiempo_lectura, fecha_publicacion, categoria_id, destacado")
       .eq("publicado", true)
       .order("fecha_publicacion", { ascending: false });
 
@@ -75,7 +75,7 @@ export const obtenerPostsDeCategoria = cache(
   async (categoriaId: number, excluirId?: number): Promise<PostResumen[]> => {
     let consulta = supabase
       .from("posts")
-      .select("id, titulo, resumen, autor, tiempo_lectura, fecha_publicacion, categoria_id")
+      .select("id, titulo, resumen, autor, tiempo_lectura, fecha_publicacion, categoria_id, destacado")
       .eq("categoria_id", categoriaId)
       .eq("publicado", true)
       .order("fecha_publicacion", { ascending: false });

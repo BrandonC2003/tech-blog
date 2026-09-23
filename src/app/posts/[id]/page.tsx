@@ -1,4 +1,5 @@
 import Link from "next/link";
+import GitHubButton from "@/components/GitHubButton";
 import { notFound } from "next/navigation";
 import { obtenerPostPorId, obtenerPostsDeCategoria } from "@/lib/queries";
 
@@ -33,6 +34,8 @@ export default async function PostPage(props: PageProps<"/posts/[id]">) {
       </p>
       {/* Markdown como texto plano por ahora; se renderiza en la fase de diseño */}
       <div className="whitespace-pre-line">{post.contenido}</div>
+
+      <GitHubButton texto="Editar en GitHub" />
 
       {relacionados.length > 0 && (
         <section>
