@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BarraProgreso from "@/components/BarraProgreso";
 import GitHubButton from "@/components/GitHubButton";
+import IndiceArticulo from "@/components/IndiceArticulo";
 import Markdown from "@/components/Markdown";
 import Portada from "@/components/Portada";
 import { obtenerPostPorId, obtenerPostsDeCategoria, obtenerPostsRecientes } from "@/lib/queries";
-import { estiloCategoria, formatearFecha } from "@/lib/formato";
+import { estiloCategoria, extraerTitulos, formatearFecha } from "@/lib/formato";
 
 // ISR: la página se sirve desde caché y se regenera como máximo cada 60 s
 export const revalidate = 60;
@@ -32,6 +34,7 @@ export default async function PostPage(props: PageProps<"/posts/[id]">) {
   const relacionados = await obtenerPostsDeCategoria(post.categoria_id, post.id);
 
   const fecha = formatearFecha(post.fecha_publicacion);
+  const titulos = extraerTitulos(post.contenido); // se calcula en el servidor; la isla solo resalta
   const iniciales = post.autor
     .split(" ")
     .map((palabra) => palabra[0])
@@ -42,6 +45,7 @@ export default async function PostPage(props: PageProps<"/posts/[id]">) {
   return (
     // Columna central de 1040px; dentro, el texto a ~700px y una barra lateral en escritorio
     <div className="mx-auto max-w-[1040px] px-4 md:px-8 lg:px-0">
+      <BarraProgreso />
       <article className="flex flex-col gap-8 pt-7 md:gap-10 md:pt-14">
         <header className="flex flex-col gap-5 md:gap-[22px]">
           <Link
@@ -84,7 +88,13 @@ export default async function PostPage(props: PageProps<"/posts/[id]">) {
         <div className="grid gap-10 lg:grid-cols-[700px_260px] lg:gap-20">
           <Markdown contenido={post.contenido} />
 
-          <aside className="lg:sticky lg:top-8 lg:self-start">
+          <aside className="flex flex-col gap-7 lg:sticky lg:top-8 lg:self-start">
+            {/* El índice solo en escritorio: en móvil ocuparía demasiado antes del contenido */}
+            {titulos.length > 0 && (
+              <div className="hidden lg:block">
+                <IndiceArticulo titulos={titulos} />
+              </div>
+            )}
             <div className="flex flex-col gap-3 rounded-[14px] border border-borde p-[22px]">
               <span className="font-mono text-xs tracking-wider text-secundario">¿ERRORES O IDEAS?</span>
               <p className="text-sm leading-relaxed text-secundario">

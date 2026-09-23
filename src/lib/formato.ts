@@ -22,3 +22,24 @@ const ESTILOS_COLOR = {
 export function estiloCategoria(color: Categoria["color"]): string {
   return color === "magenta" ? ESTILOS_COLOR.magenta : ESTILOS_COLOR.cyan;
 }
+
+// "¿Qué va en el layout?" → "que-va-en-el-layout" (para usar como id y en la URL #...)
+export function slugificar(texto: string): string {
+  return texto
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "") // quita tildes: "á" → "a"
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export type Titulo = { id: string; texto: string };
+
+// Lee los "## Título" del Markdown para armar el índice del artículo.
+// Pensado para títulos simples: solo limpia `código` y **negritas**.
+export function extraerTitulos(markdown: string): Titulo[] {
+  return [...markdown.matchAll(/^## (.+)$/gm)].map(([, crudo]) => {
+    const texto = crudo.replace(/[`*]/g, "").trim();
+    return { id: slugificar(texto), texto };
+  });
+}

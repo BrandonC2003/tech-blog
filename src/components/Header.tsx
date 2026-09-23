@@ -1,11 +1,17 @@
 import Link from "next/link";
 import GitHubButton from "./GitHubButton";
 import { IconoGitHub } from "./Iconos";
+import MenuMovil from "./MenuMovil";
+import { obtenerCategorias } from "@/lib/queries";
 import { NOMBRE_SITIO } from "@/lib/sitio";
 
-export default function Header() {
+// Sigue siendo Server Component: consulta las categorías y se las pasa a la isla MenuMovil
+export default async function Header() {
+  const categorias = await obtenerCategorias();
+
   return (
-    <header className="border-b border-borde">
+    // relative: el menú móvil se posiciona justo debajo del header
+    <header className="relative border-b border-borde">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:h-[76px] md:px-8 lg:px-20">
         <Link href="/" className="flex items-center gap-3 text-texto">
           <span className="flex size-8 items-center justify-center rounded-lg border border-cian font-mono text-xs text-cian shadow-[0_0_16px_rgb(34_211_238/0.35)] md:size-9 md:text-sm">
@@ -31,6 +37,7 @@ export default function Header() {
             <IconoGitHub />
             <span className="hidden md:inline">GitHub</span>
           </GitHubButton>
+          <MenuMovil categorias={categorias.map(({ slug, nombre }) => ({ slug, nombre }))} />
         </nav>
       </div>
     </header>

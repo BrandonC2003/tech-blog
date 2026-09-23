@@ -1,4 +1,15 @@
+import { isValidElement, type ReactNode } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
+import BloqueCodigo from "./BloqueCodigo";
+import { slugificar } from "@/lib/formato";
+
+// Texto plano de lo que React va a mostrar (para calcular el id de un título)
+function textoDe(nodo: ReactNode): string {
+  if (typeof nodo === "string" || typeof nodo === "number") return String(nodo);
+  if (Array.isArray(nodo)) return nodo.map(textoDe).join("");
+  if (isValidElement<{ children?: ReactNode }>(nodo)) return textoDe(nodo.props.children);
+  return "";
+}
 
 /*
   react-markdown convierte el texto Markdown en elementos de React (no usa
@@ -6,8 +17,9 @@ import ReactMarkdown, { type Components } from "react-markdown";
   decidimos qué clases de Tailwind lleva cada etiqueta.
 */
 const componentes: Components = {
+  // El id permite saltar a la sección (#id); IndiceArticulo calcula el mismo id con extraerTitulos
   h2: ({ children }) => (
-    <h2 className="mt-4 font-display text-[25px] font-semibold leading-tight text-texto md:text-[32px]">
+    <h2 id={slugificar(textoDe(children))} className="scroll-mt-8 mt-4 font-display text-[25px] font-semibold leading-tight text-texto md:text-[32px]">
       {children}
     </h2>
   ),
@@ -26,13 +38,9 @@ const componentes: Components = {
       {children}
     </blockquote>
   ),
-  // [&_code]:... quita el estilo de código en línea a los <code> que estén dentro del bloque
-  pre: ({ children }) => (
-    <pre className="overflow-x-auto [&_code]:border-0 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-[1em] [&_code]:text-inherit rounded-xl border border-borde bg-superficie-2 p-5 font-mono text-[13px] leading-loose text-codigo md:px-7 md:text-[15px]">
-      {children}
-    </pre>
-  ),
-  // `code` se usa tanto dentro de <pre> (bloque) como suelto (en línea); el <pre> anula este estilo
+  // El bloque de código es una isla de cliente (tiene botón de copiar)
+  pre: ({ children }) => <BloqueCodigo>{children}</BloqueCodigo>,
+  // `code` se usa tanto dentro de <pre> (bloque) como suelto (en línea); BloqueCodigo anula este estilo
   code: ({ children }) => (
     <code className="rounded border border-borde bg-superficie-2 px-1.5 py-0.5 font-mono text-[0.85em] text-cian">
       {children}
