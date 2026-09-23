@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { obtenerPostPorId } from "@/lib/queries";
+import { obtenerPostPorId, obtenerPostsDeCategoria } from "@/lib/queries";
 
 export const revalidate = 60;
 
@@ -15,12 +16,16 @@ export default async function PostPage(props: PageProps<"/posts/[id]">) {
   const post = await obtenerPostPorId(postId);
   if (!post) notFound();
 
+  // Depende de post.categoria_id, por eso va después de obtener el post
+  const relacionados = await obtenerPostsDeCategoria(post.categoria_id, post.id);
+
   const fecha = post.fecha_publicacion
     ? new Date(post.fecha_publicacion).toLocaleDateString("es", { dateStyle: "long" })
     : null;
 
   return (
     <article>
+      <Link href={`/categorias/${post.categoria.slug}`}>{post.categoria.nombre}</Link>
       <h1>{post.titulo}</h1>
       <p>
         {post.autor}
@@ -28,6 +33,19 @@ export default async function PostPage(props: PageProps<"/posts/[id]">) {
       </p>
       {/* Markdown como texto plano por ahora; se renderiza en la fase de diseño */}
       <div className="whitespace-pre-line">{post.contenido}</div>
+
+      {relacionados.length > 0 && (
+        <section>
+          <h2>Más de {post.categoria.nombre}</h2>
+          <ul>
+            {relacionados.map((r) => (
+              <li key={r.id}>
+                <Link href={`/posts/${r.id}`}>{r.titulo}</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </article>
   );
 }
