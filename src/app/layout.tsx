@@ -1,16 +1,25 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Chakra_Petch, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// next/font descarga las fuentes al compilar y las sirve desde tu dominio.
+// `variable` crea una variable CSS que globals.css conecta con Tailwind.
+const chakra = Chakra_Petch({
+  variable: "--font-chakra",
   subsets: ["latin"],
+  weight: ["500", "600", "700"], // no es una fuente variable: hay que elegir pesos
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plex = IBM_Plex_Sans({
+  variable: "--font-plex",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
 });
 
@@ -23,9 +32,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${chakra.variable} ${plex.variable} ${jetbrains.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col font-sans">
         <Header />
         {/* flex-1 empuja el footer al fondo aunque la página tenga poco contenido */}
         <main className="flex-1">{children}</main>

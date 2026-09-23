@@ -6,16 +6,26 @@ import { Categoria } from "./categoria";
 // Solo las columnas que necesita una tarjeta (sin `contenido`, que es el Markdown completo)
 export type PostResumen = Pick<
   Post,
-  "id" | "titulo" | "resumen" | "autor" | "tiempo_lectura" | "fecha_publicacion" | "categoria_id" | "destacado"
->;
+  | "id" | "titulo" | "resumen" | "autor" | "tiempo_lectura"
+  | "fecha_publicacion" | "categoria_id" | "destacado" | "imagen_url"
+> & {
+  categoria: Pick<Categoria, "nombre" | "slug" | "color">;
+};
+
+// Sin los tipos generados de la base de datos, Supabase supone que `categoria`
+// es un arreglo. Como la FK apunta a UNA categoría, llega como objeto: por eso
+// las consultas que usan estas columnas corrigen el tipo con overrideTypes.
+const COLUMNAS_RESUMEN =
+  "id, titulo, resumen, autor, tiempo_lectura, fecha_publicacion, categoria_id, destacado, imagen_url, categoria:categorias(nombre, slug, color)";
 
 export const obtenerPostsRecientes = cache(
   async (): Promise<PostResumen[]> => {
     const { data, error } = await supabase
       .from("posts")
-      .select("id, titulo, resumen, autor, tiempo_lectura, fecha_publicacion, categoria_id, destacado")
+      .select(COLUMNAS_RESUMEN)
       .eq("publicado", true)
-      .order("fecha_publicacion", { ascending: false });
+      .order("fecha_publicacion", { ascending: false })
+      .overrideTypes<PostResumen[], { merge: false }>();
 
     if (error) throw new Error(error.message);
 
@@ -25,14 +35,14 @@ export const obtenerPostsRecientes = cache(
 
 // Post completo + su categoría (Supabase la une gracias a la FK categoria_id)
 export type PostConCategoria = Post & {
-  categoria: Pick<Categoria, "nombre" | "slug">;
+  categoria: Pick<Categoria, "nombre" | "slug" | "color">;
 };
 
 export const obtenerPostPorId = cache(
   async (id: number): Promise<PostConCategoria | null> => {
     const { data, error } = await supabase
       .from("posts")
-      .select("*, categoria:categorias(nombre, slug)")
+      .select("*, categoria:categorias(nombre, slug, color)")
       .eq("id", id)
       .eq("publicado", true) // los borradores no se muestran
       .maybeSingle(); // 0 filas → data: null (con .single() sería un error)
@@ -75,14 +85,14 @@ export const obtenerPostsDeCategoria = cache(
   async (categoriaId: number, excluirId?: number): Promise<PostResumen[]> => {
     let consulta = supabase
       .from("posts")
-      .select("id, titulo, resumen, autor, tiempo_lectura, fecha_publicacion, categoria_id, destacado")
+      .select(COLUMNAS_RESUMEN)
       .eq("categoria_id", categoriaId)
       .eq("publicado", true)
       .order("fecha_publicacion", { ascending: false });
 
     if (excluirId !== undefined) consulta = consulta.neq("id", excluirId);
 
-    const { data, error } = await consulta;
+    const { data, error } = await consulta.overrideTypes<PostResumen[], { merge: false }>();
 
     if (error) throw new Error(error.message);
 
