@@ -97,11 +97,17 @@ export default async function PostPage(props: PageProps<"/posts/[id]">) {
             )}
             <div className="flex flex-col gap-3 rounded-[14px] border border-borde p-[22px]">
               <span className="font-mono text-xs tracking-wider text-secundario">¿ERRORES O IDEAS?</span>
+              {/* Los artículos viven en Supabase, no en el repositorio: se invita a reportar, no a editar */}
               <p className="text-sm leading-relaxed text-secundario">
-                Este blog es open source. Puedes proponer cambios en GitHub.
+                Si encuentras un error en este artículo o tienes una sugerencia, cuéntamelo abriendo un issue
+                en GitHub.
               </p>
-              <GitHubButton className="font-mono text-sm text-magenta-claro hover:text-magenta">
-                Editar en GitHub →
+              {/* ?title= rellena el título del issue con el nombre del artículo */}
+              <GitHubButton
+                ruta={`/issues/new?title=${encodeURIComponent(`Sobre el artículo: ${post.titulo}`)}`}
+                className="font-mono text-sm text-magenta-claro hover:text-magenta"
+              >
+                Reportar en GitHub →
               </GitHubButton>
             </div>
           </aside>
